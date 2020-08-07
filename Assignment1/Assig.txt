@@ -1,0 +1,8 @@
+Lab Assignment I
+1. To generate the random numbers by using different generator parameters and create a
+file as database to be used for realization of matrix operations
+2.Perform the matrix basic operations (Addition, Subtraction Multiply, Matrix Inversion,
+ (a matrix and a vector)), for different dimensions of the matrix.
+3. Multiply 2 matrices A[2000,2000] and B[2000,6000]. Calculate the computational time.
+4. Perform parallel program for the matrix operations (Addition, Multiply, (matrix and
+ vector)). Calculate the computational time.
