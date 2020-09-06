@@ -1,0 +1,2 @@
+Dependencies for Project 'AdditionIndirect', Target 'Target 1': (DO NOT MODIFY !)
+F (.\ADDITIONINDIRECT.ASM)(0x5F550E6E)(--cpu ARM7TDMI --bi --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 525"--list .\listings\additionindirect.lst --xref -o .\objects\additionindirect.o --depend .\objects\additionindirect.d)

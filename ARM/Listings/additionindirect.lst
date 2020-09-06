@@ -1,0 +1,64 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             PROGRAM,CODE,READONLY
+    2 00000000         ENTRY
+    3 00000000 E59F100C        LDR              R1,VALUE1
+    4 00000004 E5912000        LDR              R2,[R1]
+    5 00000008 E59F3008        LDR              R3,VALUE2
+    6 0000000C E5934000        LDR              R4,[R3]
+    7 00000010 E0825004        ADD              R5,R2,R4
+    8 00000014                 AREA             PROGRAM,DATA,READONLY
+    9 00000014 00000006 
+                       VALUE1  DCD              &00000006
+   10 00000018 0000000A 
+                       VALUE2  DCD              &0000000A
+   11 0000001C                 END
+Command Line: --debug --xref --diag_suppress=9931 --bi --apcs=interwork --depen
+d=.\objects\additionindirect.d -o.\objects\additionindirect.o -IC:\Keil_v5\ARM\
+RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine
+="__UVISION_VERSION SETA 525" --list=.\listings\additionindirect.lst ADDITIONIN
+DIRECT.ASM
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+ENTRY 00000000
+
+Symbol: ENTRY
+   Definitions
+      At line 2 in file ADDITIONINDIRECT.ASM
+   Uses
+      None
+Comment: ENTRY unused
+PROGRAM 00000000
+
+Symbol: PROGRAM
+   Definitions
+      At line 1 in file ADDITIONINDIRECT.ASM
+   Uses
+      None
+Comment: PROGRAM unused
+VALUE1 00000014
+
+Symbol: VALUE1
+   Definitions
+      At line 9 in file ADDITIONINDIRECT.ASM
+   Uses
+      At line 3 in file ADDITIONINDIRECT.ASM
+Comment: VALUE1 used once
+VALUE2 00000018
+
+Symbol: VALUE2
+   Definitions
+      At line 10 in file ADDITIONINDIRECT.ASM
+   Uses
+      At line 5 in file ADDITIONINDIRECT.ASM
+Comment: VALUE2 used once
+4 symbols
+336 symbols in table
