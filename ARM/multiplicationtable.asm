@@ -1,0 +1,17 @@
+    AREA PROGRAM,CODE,READONLY
+ENTRY
+    LDR R0,value1
+    MOV R1,R0
+    MOV R2,#0x0A
+loop
+    STR R0,[R1]
+    ADD R0,R0,R1
+    SUB R2,R2,#0x01
+    CMP R2,#0X00
+    BNE loop
+    AREA PROGRAM,DATA,READONLY
+value1 DCD &00000002
+    END
+		
+		
+		
