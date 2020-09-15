@@ -1,0 +1,71 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             PROGRAM,CODE,READONLY
+    2 00000000         ENTRY
+    3 00000000         MAIN
+    4 00000000 E59F0008        LDR              R0,VALUE1
+    5 00000004 E59F1008        LDR              R1,VALUE2
+    6 00000008 E0402001        SUB              R2,R0,R1
+    7 0000000C E2A22001        ADC              R2,R2,#0x01
+    8 00000010 000003E7 
+                       VALUE1  DCD              0X000003E7
+    9 00000014 000001F4 
+                       VALUE2  DCD              0x000001F4
+   10 00000018                 END
+Command Line: --debug --xref --diag_suppress=9931 --bi --apcs=interwork --depen
+d=.\objects\tenscompliment.d -o.\objects\tenscompliment.o -IC:\Keil_v5\ARM\RV31
+\INC -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__
+UVISION_VERSION SETA 525" --list=.\listings\tenscompliment.lst TensCompliment.A
+SM
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+ENTRY 00000000
+
+Symbol: ENTRY
+   Definitions
+      At line 2 in file TensCompliment.ASM
+   Uses
+      None
+Comment: ENTRY unused
+MAIN 00000000
+
+Symbol: MAIN
+   Definitions
+      At line 3 in file TensCompliment.ASM
+   Uses
+      None
+Comment: MAIN unused
+PROGRAM 00000000
+
+Symbol: PROGRAM
+   Definitions
+      At line 1 in file TensCompliment.ASM
+   Uses
+      None
+Comment: PROGRAM unused
+VALUE1 00000010
+
+Symbol: VALUE1
+   Definitions
+      At line 8 in file TensCompliment.ASM
+   Uses
+      At line 4 in file TensCompliment.ASM
+Comment: VALUE1 used once
+VALUE2 00000014
+
+Symbol: VALUE2
+   Definitions
+      At line 9 in file TensCompliment.ASM
+   Uses
+      At line 5 in file TensCompliment.ASM
+Comment: VALUE2 used once
+5 symbols
+337 symbols in table
