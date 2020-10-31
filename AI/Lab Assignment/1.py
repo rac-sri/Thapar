@@ -12,10 +12,10 @@ POP_SIZE = 10
 INT_MAX = 9999999
 
 def rand_num(start, end):
-    return np.random.rand(start,end)
+    return int(random.uniform(start,end))
 
 def repeat (s,ch):
-    for i in range(s.size):
+    for i in range(len(s)):
         if s[i] == ch:
             return True
     return False
@@ -39,6 +39,7 @@ def createGnome():
             break
 
         temp = rand_num(1,V)
+        print(temp)
         if repeat(gnome, chr(temp + 48)):
             gnome+= chr(temp + 48)
 
@@ -81,7 +82,6 @@ def TSPUtil(MAP):
         print(population[i].gnome + " " + population[i].fitness)
         print("\n")
 
-    found = False
     temperature = 1000
 
     while temperature > 1000 and gen <= gen_thres:
