@@ -8,7 +8,7 @@ import pandas as pd
 
 def distance_between_cities(cities):
     data = dict()
-    for index, value in enumerate(cities):
+    for index, value in enumerate(cities):  
         x1 = cities[index][0]
         y1 = cities[index][1]
         if index + 1 <= len(cities)-1:
@@ -49,7 +49,7 @@ list= generatePath(cityList)
 print(list)
 
 import numpy as np
-city_names = ['Bangalore', 'Mumbai', 'Delhi', 'Pune','Patna','Lucknow','Kashmir']
+city_names = ['0', '1', '2', '3','4','5','6']
 def plot_pop(cities):
     plt.figure(figsize=(20,10))
     x = [i[0] for i in cities]

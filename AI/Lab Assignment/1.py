@@ -39,24 +39,25 @@ def createGnome():
             break
 
         temp = rand_num(1,V)
-        print(temp)
-        if repeat(gnome, chr(temp + 48)):
+        
+        if not repeat(gnome, chr(temp + 48)):           
             gnome+= chr(temp + 48)
 
     return gnome
 
 def cal_fitness(gnome):
-    MAP[V][V] =  [ [ 0, 2, INT_MAX, 12, 5 ], 
+    MAP =  [ [ 0, 2, INT_MAX, 12, 5 ], 
                       [ 2, 0, 4, 8, INT_MAX ], 
                       [ INT_MAX, 4, 0, 3, 3 ], 
                       [ 12, 8, 3, 0, 10 ], 
                       [ 5, INT_MAX, 3, 10, 0 ] ]
 
     f = 0 
-    for i in range(len(gnome)):
-        if MAP[gnome[i] - 48][gnome[i+1]-48] == INT_MAX:
+    for i in range(len(gnome)-1):
+        print(int(gnome[i]))
+        if MAP[int(gnome[i])][int(gnome[i+1])] == INT_MAX:
             return INT_MAX
-        f+= MAP[gnome[i] - 48][gnome[i+1] - 48]
+        f+= MAP[int(gnome[i])][int(gnome[i+1])]
     return f
 
 def cooldown(temp):
@@ -75,7 +76,7 @@ def TSPUtil(MAP):
         temp.gnome = createGnome()
         temp.fitness = cal_fitness(temp.gnome)
         population.append(temp)
-
+    
     print("\n intitial population: \n Gnome Fitness value \n")
 
     for i in range(POP_SIZE):

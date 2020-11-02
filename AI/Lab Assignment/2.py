@@ -1,40 +1,53 @@
-N=4
-def output(list):
-    for i in list:
-        for j in i:
-            print(str(j)+" ",end=" ")
-        print (" ")
-
-def isValid(maze,x,y):
-    if x>=0 and x<N and y>=0 and y<N and maze[x][y]==1:
-        return False
-
-def MazeSolution(maze):
-    list=[[0 for j in range (4)]for i in range(4)]
-    if Utility(maze,0,0,list)==False:
-        print("no solution")
-        return False  
-    output(list)
-    return True
-
-def Utility(maze,x,y,list):
-    if x==N-1 and y==N-1 and maze[x][y]==1:
-        list[x][y]=1
+N = 4
+def printSolution( sol ): 
+      
+    for i in sol: 
+        for j in i: 
+            print(str(j) + " ", end ="") 
+        print("") 
+  
+def isSafe( maze, x, y ): 
+      
+    if x >= 0 and x < N and y >= 0 and y < N and maze[x][y] == 1: 
         return True
-    if isValid(maze,x,y)==True:
-        list[x][y]=N-1
-        
-        if Utility(maze,x+1,y,list)==True:
-            return True
-        if Utility(maze,x,y+1,list)==True:
-            return True
-        list[x][y]=0
+      
+    return False
+  
+def solveMaze( maze ): 
+      
+    sol = [ [ 0 for j in range(4) ] for i in range(4) ] 
+      
+    if solveMazeUtil(maze, 0, 0, sol) == False: 
+        print("Solution doesn't exist"); 
         return False
+      
+    printSolution(sol) 
+    return True
+      
+def solveMazeUtil(maze, x, y, sol): 
+    printSolution(sol)
+    print("\n")
+    if x == N - 1 and y == N - 1 and maze[x][y]== 1: 
+        sol[x][y] = 1
+        return True
+          
+    if isSafe(maze, x, y) == True:
+         
+        sol[x][y] = 1
+                
+        if solveMazeUtil(maze, x + 1, y, sol) == True:
+            return True
         
-
-maze=[[1,0,0,0],
-      [1,1,0,1],
-      [0,1,0,0],
-      [1,1,1,1]]
-MazeSolution(maze)
-    
+        if solveMazeUtil(maze, x, y + 1, sol) == True:
+            return True
+        
+        sol[x][y] = 0
+        return False
+  
+if __name__ == "__main__": 
+    maze = [ [1, 0, 0, 0], 
+             [1, 1, 0, 1], 
+             [0, 1, 0, 0], 
+             [1, 1, 1, 1] ] 
+               
+    solveMaze(maze)
