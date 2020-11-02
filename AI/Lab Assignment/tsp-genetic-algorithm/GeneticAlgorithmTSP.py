@@ -115,6 +115,8 @@ class GeneticAlgorithmTSP:
 
 if __name__ == '__main__':
     graph = Graph2.Graph()
+
+    # using the graph data structure to setup the distances and places according to the question
     graph.setAdjacent('0', '1', 1)
     graph.setAdjacent('0', '2', 3)
     graph.setAdjacent('0', '3', 4)

@@ -36,23 +36,3 @@ class Graph:
         for vrt, adj in zip(path, path[1:]):
             pathCost += self.graph[vrt][adj]
         return pathCost
-
-
-# if __name__ == '__main__':
-#     graph = Graph()
-#     graph.setAdjacent('a', 'b', 4)
-#     graph.setAdjacent('a', 'c', 4)
-#     graph.setAdjacent('a', 'd', 7)
-#     graph.setAdjacent('a', 'e', 3)
-#     graph.setAdjacent('b', 'c', 2)
-#     graph.setAdjacent('b', 'd', 3)
-#     graph.setAdjacent('b', 'e', 5)
-#     graph.setAdjacent('c', 'd', 2)
-#     graph.setAdjacent('c', 'e', 3)
-#     graph.setAdjacent('d', 'e', 6)
-    
-#     print (graph.getVertices(), '\n')
-#     print (graph)
-    
-#     path = 'abcde'
-#     print (graph.getPathCost(path))
