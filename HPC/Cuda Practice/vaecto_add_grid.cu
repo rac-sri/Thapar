@@ -40,7 +40,10 @@ int main(){
     cudaMemcpy(d_b, b, sizeof(float) * N, cudaMemcpyHostToDevice);
 
     // Executing kernel 
-    vector_add<<<1,256>>>(d_out, d_a, d_b, N);
+    int block_size = 256;
+    int grid_size = ((N + block_size) / block_size);
+
+    vector_add<<<grid_size,block_size>>>(d_out, d_a, d_b, N);
     
     // Transfer data back to host memory
     cudaMemcpy(out, d_out, sizeof(float) * N, cudaMemcpyDeviceToHost);
