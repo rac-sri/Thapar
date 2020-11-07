@@ -1,90 +1,88 @@
-#include<bits/stdc++.h>
-using namespace std;
-fstream fin;
 
-__global__ void matMul(float *A,float *B,float *C,int n) {
+#include <algorithm>
+#include <cassert>
+#include <cstdlib>
+#include <functional>
+#include <iostream>
+#include <vector>
 
-    int ROW = blockIdx.y*blockDim.y+threadIdx.y;
-    int COL = blockIdx.x*blockDim.x+threadIdx.x;
-    int idx=ROW*n+COL;
+using std::cout;
+using std::generate;
+using std::vector;
 
-    if (ROW < n && COL < n) {
-        C[idx]= A[idx ] * B[idx ];
-    }
+__global__ void matrixMul(const int *a, const int *b, int *c, int N) {
+  // Compute each thread's global row and column index
+  int row = blockIdx.y * blockDim.y + threadIdx.y;
+  int col = blockIdx.x * blockDim.x + threadIdx.x;
+
+  // Iterate over row, and down column
+  c[row * N + col] = 0;
+  for (int k = 0; k < N; k++) {
+    // Accumulate results for a single element
+    c[row * N + col] += a[row * N + k] * b[k * N + col];
+  }
 }
 
-void matrixMultiplication(float *A, float *B, float *C, int N){
-    
-     dim3 threadsPerBlock(N, N);
-     dim3 blocksPerGrid(1, 1);
-      if (N*N > 512){
-          threadsPerBlock.x = 512;
-          threadsPerBlock.y = 512;
-          blocksPerGrid.x = ceil(double(N)/double(threadsPerBlock.x));
-          blocksPerGrid.y = ceil(double(N)/double(threadsPerBlock.y));
-      }
-      matMul<<<blocksPerGrid,threadsPerBlock>>>(A, B, C, N);
-}
-int main(){
-     fin.open("./dataFile.csv", ios::in);
-     clock_t st1,e1,st,end;
-     int N=8;
-     cout<<N<<endl;
-     int size= N*N;
-     float *h_A,*h_B,*h_C; //host
-     float *d_A,*d_B,*d_C; //device copy GPU
+int main() {
+  // Matrix size of 1024 x 1024;
+  int N = 1 << 10;
 
-     h_A=(float *)malloc(size);
-     h_B=(float *)malloc(size);
-     h_C=(float *)malloc(size);
-     cudaMalloc((void **)&d_A, size);
-     cudaMalloc((void **)&d_B, size);
-     cudaMalloc((void **)&d_C, size);
-     string s;
-     fin>>s;
-     stringstream str(s);
-     for(int i=0; i<size; i++){
-        getline(str,s,',');
-        h_A[i] = stoi(s);
-        cout<<h_A[i]<<" ";
-     }
-     cout<<endl;
-     for(int i=0; i<size; i++){
-        getline(str,s,',');
-        h_B[i] = stoi(s);
-        cout<<h_B[i]<<" ";
-     }
-    cout<<endl;
-    st1=clock();
-    for(int i=0; i<N; i++){
-            for(int j=0; j<N; j++){
-                 cout<< h_A[i*N+j]*h_B[i*N+j]<<" ";
-            }
-            cout<<endl;
-        }
-        
-     e1=clock();
-    
-    
-     double time_taken =((double)(e1-st1))/CLOCKS_PER_SEC;
-     cout<<"\ncomputational time using sequential is "<<time_taken<<" secs\n";
-     cudaMemcpy(d_A,h_A,size,cudaMemcpyHostToDevice);
-     cudaMemcpy(d_B,h_B,size,cudaMemcpyHostToDevice);
-    
-     st=clock();
-     matrixMultiplication(d_A, d_B, d_C, N);
+  size_t bytes = N * N * sizeof(int);
 
-     cudaMemcpy(h_C,d_C,size,cudaMemcpyDeviceToHost);
-     end=clock();
-     cout<<endl;
-     for(int i=0; i<N; i++){
-         for(int j=0;j<N;j++)
-         cout<<h_C[i*N+j]<<" ";
-         cout<<endl;
-     }
-     
-     double time_taken1 =((double)(end-st))/CLOCKS_PER_SEC;
-     cout<<"\ncomputational time using cuda is "<<time_taken1<<" secs\n";
-     fin.close();
-     return 0; 
+  vector<int> h_a(N * N);
+  vector<int> h_b(N * N);
+  vector<int> h_c(N * N);
+
+  generate(h_a.begin(), h_a.end(), []() { return rand() % 100; });
+  generate(h_b.begin(), h_b.end(), []() { return rand() % 100; });
+
+  int *d_a, *d_b, *d_c;
+  cudaMalloc(&d_a, bytes);
+  cudaMalloc(&d_b, bytes);
+  cudaMalloc(&d_c, bytes);
+
+  cudaMemcpy(d_a, h_a.data(), bytes, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_b, h_b.data(), bytes, cudaMemcpyHostToDevice);
+
+
+  int THREADS = 32;
+
+  int BLOCKS = N / THREADS;
+
+  dim3 threads(THREADS, THREADS);
+  dim3 blocks(BLOCKS, BLOCKS);
+
+  float t1 = clock();
+  
+  matrixMul<<<blocks, threads>>>(d_a, d_b, d_c, N);
+
+  cudaMemcpy(h_c.data(), d_c, bytes, cudaMemcpyDeviceToHost);
+
+   float t2 = clock();
+  cout << "COMPLETED SUCCESSFULLY\n in " << t2-t1;
+
+
+
+// *************************** remov ************888
+//   float s1 = clock();
+
+//   for(int i=0; i<N; i++){
+//     for(int j=0; j<N; j++){
+//         cout<< h_a[i][j]*h_b[i][j]<<" ";
+//     }
+//     cout<<"\n";
+//   }
+
+//   float s2 = clock();
+//   cout << "COMPLETED SUCCESSFULLY\n in " << s2-s1;
+
+// ******************
+
+//   Free memory on device
+  cudaFree(d_a);
+  cudaFree(d_b);
+  cudaFree(d_c);
+
+
+  return 0;
 }
