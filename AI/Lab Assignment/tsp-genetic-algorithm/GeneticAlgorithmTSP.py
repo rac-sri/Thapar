@@ -5,6 +5,8 @@ import math
 
 class GeneticAlgorithmTSP:
     def __init__(self, generations=100, population_size=10, tournamentSize=4, mutationRate=0.1, elitismRate=0.1):
+
+        # assinging values
         self.generations = generations
         self.population_size = population_size
         self.tournamentSize = tournamentSize
@@ -14,7 +16,7 @@ class GeneticAlgorithmTSP:
     def optimize(self, graph):
         population = self.__makePopulation(graph.getVertices())
         elitismOffset = math.ceil(self.population_size*self.elitismRate)
-
+        # In Genetic Algorithms sometimes the fittest genomes from the current generation are passed directly to the next, contesting with the offsprings and crossover to - potentially - fitter solutions.
         if (elitismOffset > self.population_size):
             raise ValueError('Elitism Rate must be in [0,1].')
         
@@ -51,25 +53,37 @@ class GeneticAlgorithmTSP:
                 print ('\nConverged to a local minima.', end='')
                 break
 
+        # The Algorithm stops if: 1)All genomes in the population are the same or 2) Reached the max. Generation limit
+
+
         return (population[fittest], fitness[fittest])
 
 
+    # In this problem the population is a list of strings (genomes) that each letter (allele) is a vertex of the given graph.
     def __makePopulation(self, graph_nodes):
         return [''.join(v for v in np.random.permutation(graph_nodes)) for i in range(self.population_size)]
     
 
+    # It's the measure used to compare genomes to each other. For this problem a fitness function (and the one we use in this implementation) is the sum of the edge's weights through the graph for a certain path - encoded in the genome.
     def __computeFitness(self, graph, population):
         return [graph.getPathCost(path) for path in population]
 
 
+    # Each generation must have N genomes at a time. To achieve evolution we select some at the genomes to Crossover them and produce Offsprings that will be part of the new population. 
     def __tournamentSelection(self, graph, population):
         tournament_contestants = np.random.choice(population, size=self.tournamentSize)
         # print (tournament_contestants)
         tournament_contestants_fitness = self.__computeFitness(graph, tournament_contestants)
         return tournament_contestants[np.argmin(tournament_contestants_fitness)]
     
-
+    #  we have our parent genomes from the Selection procedure, now we crossover them to produce - potentially - fitter offsprings. 
     def __crossover(self, parent1, parent2):
+
+        # Select a subset from the first parent.
+        # Add that subset to the offspring.
+        # Any missing values are then added to the offspring from  the second parent in order that they are found.
+
+
         offspring = ['' for allele in range(len(parent1))]
         index_low, index_high = self.__computeLowHighIndexes(parent1)
         
@@ -83,6 +97,7 @@ class GeneticAlgorithmTSP:
         return ''.join(v for v in offspring) 
 
 
+    # After making the offsprings of the next generation, to finalize the creation of the new population we must mutate the genomes.
     def __mutate(self, genome):
         if np.random.random() < self.mutationRate:
             index_low, index_high = self.__computeLowHighIndexes(genome)
