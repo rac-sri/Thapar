@@ -1,0 +1,175 @@
+1. Write a CUDA program for ODD-EVEN sorting and calculate the execution time.
+%%cu
+#include<stdio.h>
+#include<cuda.h>
+#define N 20
+#include <time.h>
+#include <stdlib.h>
+#include<iostream>
+#define intswap(A,B) {int temp=A;A=B;B=temp;}
+using namespace std;
+__global__ void sort(int *c,int *count)
+{
+    int l;
+    if(*count%2==0)
+          l=*count/2;
+    else
+         l=(*count/2)+1;
+    for(int i=0;i<l;i++)
+    {
+            if((!(threadIdx.x&1)) && (threadIdx.x<(*count-1)))  //even phase
+            {
+                if(c[threadIdx.x]>c[threadIdx.x+1])
+                  intswap(c[threadIdx.x], c[threadIdx.x+1]);
+            }
+            __syncthreads();
+            if((threadIdx.x&1) && (threadIdx.x<(*count-1)))     //odd phase
+            {
+                if(c[threadIdx.x]>c[threadIdx.x+1])
+                  intswap(c[threadIdx.x], c[threadIdx.x+1]);
+            }
+            __syncthreads();
+    }
+}
+int main()
+{
+    clock_t tStart = clock();
+    int a[N],b[N],n;
+   n=10;
+ srand(time(NULL)); 
+ for(int i=0;i<n;i++) {
+     int r= rand()%10;
+     a[i]=r;
+ }
+  printf("Array Before Sorting: \n");
+  for(int i=0;i<n;i++)
+          {
+          printf("%d ",a[i]);
+          }
+  int *c,*count;
+  cudaMalloc((void**)&c,sizeof(int)*N);
+  cudaMalloc((void**)&count,sizeof(int));
+  cudaMemcpy(c,&a,sizeof(int)*N,cudaMemcpyHostToDevice);
+  cudaMemcpy(count,&n,sizeof(int),cudaMemcpyHostToDevice);
+  sort<<< 1,n >>>(c,count);
+  cudaMemcpy(&b,c,sizeof(int)*N,cudaMemcpyDeviceToHost);
+  printf("\nSorted Array using Cuda C : \n");
+  for(int i=0;i<n;i++)
+      {
+         printf("%d ",b[i]);
+      }
+  printf("\n");
+ cout<<"Execution Time:"<<(double)(clock() - tStart)/CLOCKS_PER_SEC;
+}
+
+
+
+2. Write a CUDA program for sort the elements using Quick sort and calculate the execution
+time.
+%%cu
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+ void printArr( int arr[], int n )
+{
+    int i;
+    for ( i = 0; i < n; ++i )
+        printf( "%d ", arr[i] );
+}
+__device__ int d_size;
+
+__global__ void partition (int *arr, int *arr_l, int *arr_h, int n)
+{
+    int z = blockIdx.x*blockDim.x+threadIdx.x;
+    d_size = 0;
+    __syncthreads();
+    if (z<n)
+      {
+        int h = arr_h[z];
+        int l = arr_l[z];
+        int x = arr[h];
+        int i = (l - 1);
+        int temp;
+        for (int j = l; j <= h- 1; j++)
+          {
+            if (arr[j] <= x)
+              {
+                i++;
+                temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+              }
+          }
+        temp = arr[i+1];
+        arr[i+1] = arr[h];
+        arr[h] = temp;
+        int p = (i + 1);
+        if (p-1 > l)
+          {
+            int ind = atomicAdd(&d_size, 1);
+            arr_l[ind] = l;
+            arr_h[ind] = p-1;  
+          }
+        if ( p+1 < h )
+          {
+            int ind = atomicAdd(&d_size, 1);
+            arr_l[ind] = p+1;
+            arr_h[ind] = h; 
+          }
+      }
+}
+ 
+void quickSortIterative (int arr[], int l, int h)
+{
+    int lstack[ h - l + 1 ], hstack[ h - l + 1];
+ 
+    int top = -1, *d_d, *d_l, *d_h;
+ 
+    lstack[ ++top ] = l;
+    hstack[ top ] = h;
+
+    cudaMalloc(&d_d, (h-l+1)*sizeof(int));
+    cudaMemcpy(d_d, arr,(h-l+1)*sizeof(int),cudaMemcpyHostToDevice);
+
+    cudaMalloc(&d_l, (h-l+1)*sizeof(int));
+    cudaMemcpy(d_l, lstack,(h-l+1)*sizeof(int),cudaMemcpyHostToDevice);
+
+    cudaMalloc(&d_h, (h-l+1)*sizeof(int));
+    cudaMemcpy(d_h, hstack,(h-l+1)*sizeof(int),cudaMemcpyHostToDevice);
+    int n_t = 1;
+    int n_b = 1;
+    int n_i = 1; 
+    while ( n_i > 0 )
+    {
+        partition<<<n_b,n_t>>>( d_d, d_l, d_h, n_i);
+        int answer;
+        cudaMemcpyFromSymbol(&answer, d_size, sizeof(int), 0, cudaMemcpyDeviceToHost); 
+        if (answer < 1024)
+          {
+            n_t = answer;
+          }
+        else
+          {
+            n_t = 1024;
+            n_b = answer/n_t + (answer%n_t==0?0:1);
+          }
+        n_i = answer;
+        cudaMemcpy(arr, d_d,(h-l+1)*sizeof(int),cudaMemcpyDeviceToHost);
+    }
+}
+ 
+
+ 
+int main()
+{
+    int arr[5000];
+    srand(time(NULL));
+    for (int i = 0; i<5000; i++)
+       {
+         arr[i] = rand ()%10000;
+       }
+    int n = sizeof( arr ) / sizeof( *arr );
+    quickSortIterative( arr, 0, n - 1 );
+    printArr( arr, n );
+    return 0;
+}
