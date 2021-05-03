@@ -1,8 +1,8 @@
 #include <GL/glut.h>
 #include<iostream>
 using namespace std;
-int rx, ry;//semi-Major axis & semi Minor Axis
-int xCenter, yCenter;//center of ellipse
+int rx, ry;
+int xCenter, yCenter;
 void myinit(void)
 {
 	glClearColor(1.0, 1.0, 1.0, 0.0);
@@ -19,22 +19,16 @@ void setPixel(GLint x, GLint y)
 
 void ellipseMidPoint()
 {
-	//int xCenter = 250;
-	//int yCenter = 300;
-	//int rx = 200;
-	//int ry = 200;
-
-	//plotting for 1st region of 1st quardant and the slope will be < -1
-	 //----------------------Region-1------------------------//
+	
 	float x = 0;
-	float y = ry;//(0,ry) ---
+	float y = ry;
 	float p1 = ry * ry - (rx * rx) * ry + (rx * rx) * (0.25);
-	//slope
+
 	float dx = 2 * (ry * ry) * x;
 	float dy = 2 * (rx * rx) * y;
 	while (dx < dy)
 	{
-		//plot (x,y)
+		
 		setPixel(xCenter + x, yCenter + y);
 		setPixel(xCenter - x, yCenter + y);
 		setPixel(xCenter + x, yCenter - y);
@@ -54,18 +48,17 @@ void ellipseMidPoint()
 			p1 = p1 + dx - dy + (ry * ry);
 		}
 	}
-	//ploting for 2nd region of 1st quardant and the slope will be > -1
-	 //----------------------Region-2------------------------//
+	
 	float p2 = (ry * ry) * (x + 0.5) * (x + 0.5) + (rx * rx) * (y - 1) * (y - 1) - (rx * rx) * (ry * ry);
 
 
 	while (y > 0)
 	{
-		//plot (x,y)
+
 		setPixel(xCenter + x, yCenter + y);
 		setPixel(xCenter - x, yCenter + y);
 		setPixel(xCenter + x, yCenter - y);
-		setPixel(xCenter - x, yCenter - y);     //glEnd();
+		setPixel(xCenter - x, yCenter - y);     
 		if (p2 > 0)
 		{
 			x = x;
@@ -88,14 +81,12 @@ void ellipseMidPoint()
 }
 void display()
 {
-	glClear(GL_COLOR_BUFFER_BIT);     // clear the screen
-	glColor3f(1.0, 0.0, 0.0);          // red foreground
-	glPointSize(2.0);               // size of points to be drawin (in pixel)
-
-	//establish a coordinate system for the image
+	glClear(GL_COLOR_BUFFER_BIT);     
+	glColor3f(1.0, 0.0, 0.0);         
+	glPointSize(2.0);              
 
 	ellipseMidPoint();
-	glFlush(); // send all output to the display
+	glFlush();
 }
 
 int main(int argc, char** argv)
@@ -105,13 +96,13 @@ int main(int argc, char** argv)
 	rx = 300;
 	ry = 120;
 	glutInit(&argc, argv);
-	glutInitWindowSize(640, 480); // set the size of the window
-	glutInitWindowPosition(10, 10); // the position of the top-left of window
+	glutInitWindowSize(640, 480); 
+	glutInitWindowPosition(10, 10); 
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutCreateWindow("Midpoint Ellipse Drawing Algorithm");
 	myinit();
-	glutDisplayFunc(display); // set the gl display callback function
-	glutMainLoop(); // enter the GL event loop
+	glutDisplayFunc(display);
+	glutMainLoop(); 
 
 }
 
