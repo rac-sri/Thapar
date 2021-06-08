@@ -28,7 +28,7 @@ for (int j = 0; j < N; j ++)
 
 
 int main() {
-    ifstream fin("fname.txt"); 
+    ifstream fin("6.txt"); 
     int word=1; 
     char ch;
     fin.seekg(0,ios::beg); 
